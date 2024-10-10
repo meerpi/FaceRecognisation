@@ -10,8 +10,8 @@ main_path = 'pics'  # The main directory where each folder represents a person
 # Function to read the images in the dataset, convert them to grayscale values, return samples
 def getImagesAndLabels(main_path):
     faceSamples = []
-    ids = []
-    current_id = 0  # To assign unique numeric IDs to each person (based on folder name)
+    names = []
+    current_id = 0  # To assign unique numeric names to each person (based on folder name)
     label_dict = {}  # Dictionary to map folder names to numeric labels
 
     # Loop over each folder in the main directory
@@ -37,13 +37,13 @@ def getImagesAndLabels(main_path):
 
                     for (x, y, w, h) in faces:
                         faceSamples.append(img[y:y+h, x:x+w])  # Add the detected face to samples
-                        ids.append(label_dict[folder_name])  # Use the folder name as the label
+                        names.append(label_dict[folder_name])  # Use the folder name as the label
 
-    return faceSamples, ids, label_dict
+    return faceSamples, names, label_dict
 
 # Function to train the recognizer
-def trainRecognizer(faces, ids):
-    recognizer.train(faces, np.array(ids))
+def trainRecognizer(faces, names):
+    recognizer.train(faces, np.array(names))
     # Create the 'trainer' folder if it doesn't exist
     if not os.path.exists("trainer"):
         os.makedirs("trainer")
@@ -52,12 +52,12 @@ def trainRecognizer(faces, ids):
 
 print("\n Training faces. It will take a few seconds. Wait ...")
 # Get face samples and their corresponding labels
-faces, ids, label_dict = getImagesAndLabels(main_path)
+faces, names, label_dict = getImagesAndLabels(main_path)
 
 # Train the LBPH recognizer using the face samples and their corresponding labels
-trainRecognizer(faces, ids)
+trainRecognizer(faces, names)
 
 # Print the number of unique faces trained and the person-label mapping
-num_faces_trained = len(set(ids))
+num_faces_trained = len(set(names))
 print(f"\n {num_faces_trained} faces trained. Exiting Program.")
 print(f"Label mapping: {label_dict}")
